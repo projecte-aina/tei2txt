@@ -13,6 +13,7 @@ java -jar grobid-core/build/libs/grobid-core-0.7.1-onejar.jar -gH /mnt/BSC/grobi
 ### Help
 '''
 python tei2txt.py --help
+
 Usage: tei2txt.py [options]
 
 
