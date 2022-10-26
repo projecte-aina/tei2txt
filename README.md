@@ -23,29 +23,29 @@ bash setup.sh
 ```
 
 ### Help
-'''
+```bash
 python tei2txt.py --help
+```
 
-Usage: tei2txt.py [options]
+### Usage
 
+```bash
+python tei2txt.py [options]
+```
 
-Options:
+| Option              | Default   | Description                                                           |
+|:--------------------|:----------|:----------------------------------------------------------------------|
+| `-i`, `--input`     | `None`    | **Required.** Xml input directory                                     |
+| `-o`, `--output`    | `None`    | **Required.** Text output directory                                   |
+| `-e`, `--extracted` | `None`    | **Optional.** Xml extracted directory                                 |
+| `-f`, `--filter`    | `None`    | **Optional.** If filter by lang                                       |
+| `-s`, `--stats`     | `None`    | **Optional.** lang_id stats in json format                            |
+| `-S`, `--selector`  | `"head, p"` | **Optional.** Xml css selector, **Use of double quotes is mandatory** |
 
-  -h, --help            show this help message and exit
-  
-  -i INPUT, --inputdir=INPUT [REQUIRED]
-                        inputdirectory
-                        
-  -o OUTPUT, --outputdirectory=OUTPUT [REQUIRED]
-                        output directory
+#### Example:
+```bash
+python tei2txt.py --input ./xml --output ./txt --selector "article-meta article-title, abstract, body title, body p"
 
-  -e EXTRACTED --extractdirectory [OPTIONAL]
-                        tei-xml extracted directory
-                        
-  -f FILTER, --filter=FILTER [OPTIONAL]
-                        if filter by lang
-                        
-  -s STATS, --stats=STATS [OPTIONAL]
-                        lang_id stats in json format
- '''
+```
+
 

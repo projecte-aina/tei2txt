@@ -21,11 +21,18 @@ def read_tei(tei_file):
     raise RuntimeError('Cannot generate a soup from the input')
 
 
-def extract_text(soup, p):
+def extract_text_by_selector(soup, selector):
     alltext = []
-    for data in soup.find_all(p):
+    for data in soup.select(selector):
         alltext.append(data.get_text())
     return alltext
+
+
+# def extract_text(soup, p):
+#     alltext = []
+#     for data in soup.find_all(p):
+#         alltext.append(data.get_text())
+#     return alltext
 
 
 def langdet(alltext):
@@ -50,18 +57,24 @@ def langaverage(alltext):
 
 def main():
     parser = OptionParser()
-    parser.add_option("-i", "--inputdir", dest="input",
-                      help="inputdirectory")
-    parser.add_option("-o", "--outputdirectory", dest="output",
+    parser.add_option("-i", "--input", dest="input",
+                      help="input directory")
+    parser.add_option("-o", "--output", dest="output",
                       help="output directory")
-    parser.add_option("-e", "--extractdirectory", dest="extracted", help="extracted tei-xml directory")
+    parser.add_option("-e", "--extract", dest="extracted", help="extracted xml directory")
 
     parser.add_option("-f", "--filter", dest="filter",
                       help="if filter by lang", default=None)
     parser.add_option("-s", "--stats", dest="stats",
                       help="lang_id stats", default=None)
+    parser.add_option('-S', '--selector',
+                      default="head, p",
+                      dest="selector",
+                      type='string')
 
     (options, args) = parser.parse_args(sys.argv)
+
+    # default_tags =  ['head', 'p']
 
     input_dir = Path(options.input)
     output_dir = Path(options.output)
@@ -85,7 +98,9 @@ def main():
 
         print(Path(input_dir, tei_file))
         soup = read_tei(Path(input_dir, tei_file))
-        text_list = extract_text(soup, ['head', 'p'])
+
+        text_list = extract_text_by_selector(soup, options.selector)
+        # text_list = extract_text(soup, default_tags)
         if text_list:
             if options.filter:
                 p = langaverage(text_list)
