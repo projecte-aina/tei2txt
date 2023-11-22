@@ -1,20 +1,11 @@
-## Extraccion de txt plano a partir de tei-xml generado medinte GrobID
-### Con o sin identificación de lengua
+Extraction of plain text from TEI-XML generated using [Grobid](https://github.com/kermitt2/grobid/)
 
-### Se extraen los textos desde pdfs mediante Grobid
-
-https://grobid.readthedocs.io
-
-
-```
-java -jar grobid-core/build/libs/grobid-core-0.7.1-onejar.jar -gH /mnt/BSC/grobid-0.7.1/grobid-home/ -dIn /mnt/BSC/catala/corpora/tdxin -dOut /mnt/BSC/catala/corpora/tdxout -ignoreAssets -exe processFullText
-```
 
 ## Install and run
 
 ### Virtual environment
 
-pdf2tei2txt was built and tested with Python3.9. It should work for Python >= 3.9 but it has not been tested with other versions than 3.9.
+tei2txt was built and tested with Python3.9. It should work for Python >= 3.9 but it has not been tested with other versions than 3.9.
 
 For creating the virtual environment and installing the dependencies (from `requirements.txt`), run:
 
@@ -63,5 +54,10 @@ Once the Docker image is built, you can use the following command to run the con
 
 ```bash
 docker run --rm -v path/to/tei-xml/input:/app/input -v path/to/txt/output:/app/output tei2txt:1.0 -i ./input -o ./output
+```
 
+Example of running tei2txt using custom selectors
+
+```bash
+docker run --rm -v ./examples/tei-xml/:/app/input -v ./output:/app/in-container-output tei2txt:1.0 -i ./input -o ./in-container-output --selector "title,author"
 ```
