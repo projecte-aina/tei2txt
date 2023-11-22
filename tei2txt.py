@@ -11,8 +11,8 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 import langid
 import os, json, sys
-from optparse import OptionParser
-
+# from optparse import OptionParser
+import argparse
 
 def read_tei(tei_file):
     with open(tei_file, 'r') as tei:
@@ -26,13 +26,6 @@ def extract_text_by_selector(soup, selector):
     for data in soup.select(selector):
         alltext.append(data.get_text())
     return alltext
-
-
-# def extract_text(soup, p):
-#     alltext = []
-#     for data in soup.find_all(p):
-#         alltext.append(data.get_text())
-#     return alltext
 
 
 def langdet(alltext):
@@ -56,40 +49,35 @@ def langaverage(alltext):
 
 
 def main():
-    parser = OptionParser()
-    parser.add_option("-i", "--input", dest="input",
-                      help="input directory")
-    parser.add_option("-o", "--output", dest="output",
-                      help="output directory")
-    parser.add_option("-e", "--extract", dest="extracted", help="extracted xml directory")
+    parser = argparse.ArgumentParser(prog="tei2txt", description="Convert tei-xml to txt")
 
-    parser.add_option("-f", "--filter", dest="filter",
-                      help="if filter by lang", default=None)
-    parser.add_option("-s", "--stats", dest="stats",
-                      help="lang_id stats", default=None)
-    parser.add_option('-S', '--selector',
-                      default="head, p",
-                      dest="selector",
-                      type='string')
+    parser.add_argument("-i", "--input", help="input directory", required=True)
+    parser.add_argument("-o", "--output", help="output directory", required=True)
 
-    (options, args) = parser.parse_args(sys.argv)
+    parser.add_argument("-e", "--extract", dest="extracted", help="extracted xml directory")
+    parser.add_argument("-f", "--filter", dest="filter", help="if filter by lang")
+    parser.add_argument("-s", "--stats", dest="stats", help="lang_id stats")
+    parser.add_argument('-S', '--selector', default="head, p", dest="selector", type=str)
+
+    args = parser.parse_args()
+
 
     # default_tags =  ['head', 'p']
 
-    input_dir = Path(options.input)
-    output_dir = Path(options.output)
+    input_dir = Path(args.input)
+    output_dir = Path(args.output)
     extracted_dir = None
 
     output_dir.mkdir(exist_ok=True)
 
-    if options.extracted:
-        extracted_dir = Path(options.extracted)
+    if args.extracted:
+        extracted_dir = Path(args.extracted)
         extracted_dir.mkdir(exist_ok=True)
 
     # else:
     #     extracted_dir = Path(f"{output_dir.parent}/extracted")
 
-    if options.stats:
+    if args.stats:
         stats = {}
     all_files = os.listdir(input_dir)
     print(f"[TEI2TXT] Processing: {str(len(all_files))} files ...")
@@ -99,14 +87,15 @@ def main():
         print(Path(input_dir, tei_file))
         soup = read_tei(Path(input_dir, tei_file))
 
-        text_list = extract_text_by_selector(soup, options.selector)
+        text_list = extract_text_by_selector(soup, args.selector)
+
         # text_list = extract_text(soup, default_tags)
         if text_list:
-            if options.filter:
+            if args.filter:
                 p = langaverage(text_list)
-                if options.stats:
+                if args.stats:
                     stats[tei_file] = p
-                if p > int(options.filter):
+                if p > int(args.filter):
                     text_string = "\n".join(text_list)
                     w = open(output_dir + tei_file + ".txt", "w")
                     w.write(text_string)
@@ -120,7 +109,7 @@ def main():
                 w.close()
             if extracted_dir is not None:
                 shutil.move(Path(input_dir, tei_file), extracted_dir)
-    if options.stats:
+    if args.stats:
         with open("lang_id_stats.json", "w") as jout:
             json.dump(stats, jout, ensure_ascii=False, indent=1)
 

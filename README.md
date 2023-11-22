@@ -49,3 +49,19 @@ python tei2txt.py --input ./xml --output ./txt --selector "article-meta article-
 ```
 
 
+## Docker
+### Build Docker Image
+To build the Docker image, navigate to the root directory of the project and run the following command:
+
+
+```bash
+docker build -t tei2txt:1.0 .
+```
+
+### Run Docker Container
+Once the Docker image is built, you can use the following command to run the container:
+
+```bash
+docker run --rm -v path/to/tei-xml/input:/app/input -v path/to/txt/output:/app/output tei2txt:1.0 -i ./input -o ./output
+
+```
