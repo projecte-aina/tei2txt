@@ -11,7 +11,6 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 import langid
 import os, json, sys
-# from optparse import OptionParser
 import argparse
 
 def read_tei(tei_file):
@@ -53,38 +52,32 @@ def main():
 
     parser.add_argument("-i", "--input", help="input directory", required=True)
     parser.add_argument("-o", "--output", help="output directory", required=True)
-
-    parser.add_argument("-e", "--extract", dest="extracted", help="extracted xml directory")
+    parser.add_argument("--force", action="store_true", help="to reprocess tei.xml input files")
     parser.add_argument("-f", "--filter", dest="filter", help="if filter by lang")
     parser.add_argument("-s", "--stats", dest="stats", help="lang_id stats")
     parser.add_argument('-S', '--selector', default="head, p", dest="selector", type=str)
 
     args = parser.parse_args()
 
-
-    # default_tags =  ['head', 'p']
-
     input_dir = Path(args.input)
     output_dir = Path(args.output)
-    extracted_dir = None
-
     output_dir.mkdir(exist_ok=True)
+    force = args.force
 
-    if args.extracted:
-        extracted_dir = Path(args.extracted)
-        extracted_dir.mkdir(exist_ok=True)
-
-    # else:
-    #     extracted_dir = Path(f"{output_dir.parent}/extracted")
 
     if args.stats:
         stats = {}
     all_files = os.listdir(input_dir)
+    
     print(f"[TEI2TXT] Processing: {str(len(all_files))} files ...")
-    #
+    
     for tei_file in all_files:
 
         print(Path(input_dir, tei_file))
+
+        if not force and os.path.isfile(Path(input_dir, tei_file)):
+            print(tei_file, "already exist, skipping... (use --force to reprocess tei.xml input files)")
+            continue
         soup = read_tei(Path(input_dir, tei_file))
 
         text_list = extract_text_by_selector(soup, args.selector)
@@ -107,8 +100,6 @@ def main():
                 w = open(Path(output_dir, f"{tei_file}.txt"), "w")
                 w.write(text_string)
                 w.close()
-            if extracted_dir is not None:
-                shutil.move(Path(input_dir, tei_file), extracted_dir)
     if args.stats:
         with open("lang_id_stats.json", "w") as jout:
             json.dump(stats, jout, ensure_ascii=False, indent=1)

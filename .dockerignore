@@ -3,3 +3,7 @@
 .git
 Dockerfile
 .gitignore
+examples
+README.md
+LICENSE
+setup.sh
