@@ -28,7 +28,7 @@ python tei2txt.py [options]
 |:--------------------|:----------|:----------------------------------------------------------------------|
 | `-i`, `--input`     | `None`    | **Required.** Xml input directory                                     |
 | `-o`, `--output`    | `None`    | **Required.** Text output directory                                   |
-| `-e`, `--extracted` | `None`    | **Optional.** Xml extracted directory                                 |
+| `--force` | `False`    | **Optional.** To reprocess tei.xml input files                              |
 | `-f`, `--filter`    | `None`    | **Optional.** If filter by lang                                       |
 | `-s`, `--stats`     | `None`    | **Optional.** lang_id stats in json format                            |
 | `-S`, `--selector`  | `"head, p"` | **Optional.** Xml css selector, **Use of double quotes is mandatory** |
