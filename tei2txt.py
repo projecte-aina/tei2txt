@@ -69,14 +69,15 @@ def main():
         stats = {}
     all_files = os.listdir(input_dir)
     
-    print(f"[TEI2TXT] Processing: {str(len(all_files))} files ...")
+    print(f"[TEI2TXT] Processing: {str(len(all_files))} files")
     
     for tei_file in all_files:
+        
+        output_file_path = Path(output_dir, f"{tei_file}.txt")
+        print(f"[TEI2TXT] Processing {Path(input_dir, tei_file)}")
 
-        print(Path(input_dir, tei_file))
-
-        if not force and os.path.isfile(Path(input_dir, tei_file)):
-            print(tei_file, "already exist, skipping... (use --force to reprocess tei.xml input files)")
+        if not force and os.path.isfile(output_file_path):
+            print(f"[TEI2TXT] {output_file_path}, already exist, skipping... (use --force to reprocess tei.xml input files)")
             continue
         soup = read_tei(Path(input_dir, tei_file))
 
@@ -97,7 +98,7 @@ def main():
                     pass
             else:
                 text_string = "\n".join(text_list)
-                w = open(Path(output_dir, f"{tei_file}.txt"), "w")
+                w = open(output_file_path, "w")
                 w.write(text_string)
                 w.close()
     if args.stats:
